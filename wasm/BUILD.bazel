@@ -10,8 +10,8 @@ go_library(
     importpath = "github.com/grahamjenson/bazel-golang-wasm-protoc/wasm",
     visibility = ["//visibility:private"],
     deps = [
-        "//protos:go_default_library",
-        "@com_github_maxence_charriere_go_app_v6//pkg/app:go_default_library",
+        "//protos/api:go_default_library",
+        "@com_github_maxence_charriere_go_app//pkg/app:go_default_library",
     ],
 )
 

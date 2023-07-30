@@ -5,5 +5,5 @@ go_library(
     srcs = ["server.go"],
     importpath = "github.com/grahamjenson/bazel-golang-wasm-protoc/server",
     visibility = ["//visibility:public"],
-    deps = ["//protos:go_default_library"],
+    deps = ["//protos/api:go_default_library"],
 )

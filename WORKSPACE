@@ -3,63 +3,80 @@ workspace(name = "bazel_golang_wasm_proto")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "51dc53293afe317d2696d4d6433a4c33feedb7748a9e352072e2ec3c0dafd2c6",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.40.1/rules_go-v0.40.1.zip",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.40.1/rules_go-v0.40.1.zip",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains(version = "1.20.5")
+
 ###
 # Rules
 ###
 
 http_archive(
-    name = "io_bazel_rules_go",
-    sha256 = "e6a6c016b0663e06fa5fccf1cd8152eab8aa8180c583ec20c872f4f9953a7ac5",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.22.1/rules_go-v0.22.1.tar.gz",
-        "https://github.com/bazelbuild/rules_go/releases/download/v0.22.1/rules_go-v0.22.1.tar.gz",
-    ],
-)
-
-http_archive(
     name = "bazel_gazelle",
-    sha256 = "d8c45ee70ec39a57e7a05e5027c32b1576cc7f16d9dd37135b0eddde45cf1b10",
+    sha256 = "727f3e4edd96ea20c29e8c2ca9e8d2af724d8c7778e7923a854b2c80952bc405",
     urls = [
-        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/v0.20.0/bazel-gazelle-v0.20.0.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.20.0/bazel-gazelle-v0.20.0.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.30.0/bazel-gazelle-v0.30.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.30.0/bazel-gazelle-v0.30.0.tar.gz",
     ],
 )
 
 git_repository(
     name = "com_google_protobuf",
-    commit = "09745575a923640154bcf307fba8aedff47f240a",
+    commit = "a80daa2a2caaaac9ebe9ae6bb1b639c2771c5c55",
     remote = "https://github.com/protocolbuffers/protobuf",
-    shallow_since = "1558721209 -0700",
 )
 
 http_archive(
     name = "rules_proto_grpc",
-    sha256 = "5f0f2fc0199810c65a2de148a52ba0aff14d631d4e8202f41aff6a9d590a471b",
-    strip_prefix = "rules_proto_grpc-1.0.2",
-    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/1.0.2.tar.gz"],
+    sha256 = "928e4205f701b7798ce32f3d2171c1918b363e9a600390a25c876f075f1efc0a",
+    strip_prefix = "rules_proto_grpc-4.4.0",
+    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/releases/download/4.4.0/rules_proto_grpc-4.4.0.tar.gz"],
 )
+
+load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_proto_grpc_toolchains")
+
+rules_proto_grpc_toolchains()
+
+rules_proto_grpc_repos()
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
 
 ###
 # Overrides to get WASM working with protoc
 ###
 
-http_archive(
-    name = "com_github_golang_protobuf",
-    patch_args = ["-p1"],
-    patches = [
-        # copy and edit from @io_bazel_rules_go
-        "//third_party:proto.patch",
-        # additional targets may depend on generated code for well known types
-        "@io_bazel_rules_go//third_party:com_github_golang_protobuf-extras.patch",
-    ],
-    sha256 = "3b1ab4c27a3a3ea02fcd5d701d4680cf724e0b7499c67f520f1f1dd03ef0bc45",
-    strip_prefix = "protobuf-1.3.3",
-    # v1.3.3, latest as of 2020-02-21
-    urls = [
-        "https://mirror.bazel.build/github.com/golang/protobuf/archive/v1.3.3.zip",
-        "https://github.com/golang/protobuf/archive/v1.3.3.zip",
-    ],
-)
+#http_archive(
+#name = "com_github_golang_protobuf",
+#patch_args = ["-p1"],
+#patches = [
+## copy and edit from @io_bazel_rules_go
+#"//third_party:proto.patch",
+## additional targets may depend on generated code for well known types
+#"@io_bazel_rules_go//third_party:com_github_golang_protobuf-extras.patch",
+#],
+#sha256 = "3b1ab4c27a3a3ea02fcd5d701d4680cf724e0b7499c67f520f1f1dd03ef0bc45",
+#strip_prefix = "protobuf-1.3.3",
+## v1.3.3, latest as of 2020-02-21
+#urls = [
+#"https://mirror.bazel.build/github.com/golang/protobuf/archive/v1.3.3.zip",
+#"https://github.com/golang/protobuf/archive/v1.3.3.zip",
+#],
+#)
 
 http_archive(
     name = "com_github_gogo_protobuf",
@@ -79,12 +96,6 @@ http_archive(
 ###
 # Bootrap
 ###
-
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
-
-go_rules_dependencies()
-
-go_register_toolchains(go_version = "1.14")
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 
@@ -112,14 +123,6 @@ load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_pr
 rules_proto_grpc_toolchains()
 
 rules_proto_grpc_repos()
-
-load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
-
-grpc_deps()
-
-load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
-
-grpc_extra_deps()
 
 ###
 # Data Files

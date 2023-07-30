@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api"
-	"github.com/maxence-charriere/go-app/v6/pkg/app"
+	"github.com/maxence-charriere/go-app/v9/pkg/app"
 )
 
 type InstanceTable struct {
@@ -18,7 +19,7 @@ func (p *InstanceTable) SetManager(manager *Manager) {
 
 func (p *InstanceTable) Render() app.UI {
 
-	nodes := []app.Node{}
+	nodes := []app.UI{}
 	for _, i := range p.instances {
 		nodes = append(nodes, app.Tr().Body(
 			app.Td().Body(app.Text(i.Name)),

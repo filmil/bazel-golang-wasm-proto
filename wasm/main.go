@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api"
-	"github.com/maxence-charriere/go-app/v6/pkg/app"
+	"github.com/maxence-charriere/go-app/v9/pkg/app"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 	manager.instanceTable.SetManager(manager)
 
 	app.Route("/", manager)
-	app.Run()
+	app.RunWhenOnBrowser()
 }
 
 // Manager is the main controller of this application, also the root Body

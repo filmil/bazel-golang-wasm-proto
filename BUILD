@@ -13,9 +13,9 @@ go_library(
     importpath = "github.com/grahamjenson/bazel-golang-wasm-protoc",
     visibility = ["//visibility:private"],
     deps = [
-        "//protos:go_default_library",
+        "//protos/api:go_default_library",
         "//server:go_default_library",
-        "@com_github_maxence_charriere_go_app_v6//pkg/app:go_default_library",
+        "@com_github_maxence_charriere_go_app//pkg/app:go_default_library",
     ],
 )
 
@@ -28,4 +28,8 @@ go_binary(
     ],
     embed = [":go_default_library"],
     visibility = ["//visibility:public"],
+    args = [
+        "--bootstrap-css-path=$(location @com_github_bootstrap//file:bootstrap.css)",
+        "--wasm-path=$(location //wasm:app.wasm)",
+    ]
 )

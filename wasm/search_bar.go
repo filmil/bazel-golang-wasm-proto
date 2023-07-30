@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/maxence-charriere/go-app/v6/pkg/app"
+	"github.com/maxence-charriere/go-app/v9/pkg/app"
 )
 
 type SearchBar struct {
@@ -20,7 +20,7 @@ func (p *SearchBar) Render() app.UI {
 		Value(p.searchString).
 		Placeholder("t2.small").
 		AutoFocus(true).
-		OnKeyup(p.OnInputChange)
+		OnKeyUp(p.OnInputChange)
 
 	return app.Div().Class("input-group").Body(
 		app.Div().Class("input-group-prepend").Body(app.Span().Class("input-group-text").Body(app.Text("🔍"))),
@@ -28,8 +28,8 @@ func (p *SearchBar) Render() app.UI {
 	)
 }
 
-func (p *SearchBar) OnInputChange(src app.Value, e app.Event) {
-	p.searchString = src.Get("value").String()
-	p.Update()
-	p.manager.UpdateInstances(p.searchString)
+func (p *SearchBar) OnInputChange(src app.Context, e app.Event) {
+	//p.searchString = src.Get("value").String()
+	//p.Update()
+	//p.manager.UpdateInstances(p.searchString)
 }
